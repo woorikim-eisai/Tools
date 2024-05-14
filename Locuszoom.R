@@ -2,6 +2,10 @@
 #Last update: 2024-05-14
 #This R script creates a locuszoom plot using locuszoomr package
 #Input format: chr, pos (hg19), rsid and p 
+#Example
+#chrom,pos,rsid,p
+#2,113473611,2:113473611_AT_A,0.0001
+#2,113473650,rs138922943,0.5463
 
 library(locuszoomr); library(EnsDb.Hsapiens.v75); library(data.table)
 
