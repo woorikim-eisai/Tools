@@ -55,6 +55,11 @@ locus_plot(loc,
            highlight = Gene)
 dev.off()
 
+# Plot locuszoom plotly
+locus_plotly(loc,
+             maxrows = 2,
+             filter_gene_biotype = 'protein_coding')
+
 # STEP3.2 ########################################################################
 # Plot multiple locuszoom plot using for loop 
 Assay=c("IL1RN_P18510_OID20700_v1_Inflammation", "IL1R1_P14778_OID21116_v1_Neurology", "HEPACAM2_A8MVW5_OID31151_v1_Neurology_II", "CALCA_P01258_OID20983_v1_Neurology", "IL36G_Q9NZH8_OID30551_v1_Inflammation_II", "MMP1_P03956_OID20672_v1_Inflammation", "IFIT3_O14879_OID31283_v1_Oncology_II", "KLK15_Q9H2R5_OID31427_v1_Oncology_II", "TG_P01266_OID31359_v1_Oncology_II", "DPP10_Q8N608_OID20527_v1_Inflammation", "UMOD_P07911_OID20237_v1_Cardiometabolic")
