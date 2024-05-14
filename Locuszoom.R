@@ -1,25 +1,29 @@
+#Author: Woori Kim
+#Last update: 2024-05-14
+#This R script creates a locuszoom plot using locuszoomr package
+#Input format: chr, pos (hg19), rsid and p 
+
 library(locuszoomr); library(EnsDb.Hsapiens.v75); library(data.table)
 
-#Change input for your analysis
+# STEP1 ########################################################################
+# Prepare input for your analysis
 
-Pop="EUR"
+# Example 
 Gene="PAX8"
-Assay="IL1RN_P18510_OID20700_v1_Inflammation"
+Pop="EUR"
+Filename.Input=paste0("/mnt/zfs/P201_UKB_pQTL/results/PAX8/region/plot/input/results_PAX8_region_IL1RN_P18510_OID20700_v1_Inflammation_rsID.txt")
+Filename.Output=paste0("/mnt/zfs/P201_UKB_pQTL/results/PAX8/region/plot/output/locuszoom_PAX8_region_IL1RN_P18510_OID20700_v1_Inflammation_EUR.pdf")
 
-#make object for Filename.Input and Filename.Output
-Filename.Input=paste0("/mnt/zfs/P201_UKB_pQTL/results/", Gene, "/region/plot/input/results_", Gene, "_region_", Assay, "_rsID.txt")
-Filename.Output=paste0("/mnt/zfs/P201_UKB_pQTL/results/", Gene, "/region/plot/output/locuszoom_", Gene, "_region_", Assay, "_", Pop, ".pdf")
+# STEP2 ########################################################################
+# Create locus object for plotting
 
-#########################################################################
-
-#read input 
+# Read input 
 dat <- fread(Filename.Input)
 
-#create locus object for plotting
-#gene region +/-500kb 
+# Create locus object for plotting: gene region +/-500kb 
 loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75")
 
-#add LD: to do this, get the token in here: https://ldlink.nih.gov/?tab=apiaccess
+# Add LD: to do this, get the token in here: https://ldlink.nih.gov/?tab=apiaccess
 #it queries LDlink (https://ldlink.nci.nih.gov/) via the LDlinkR package.
 #pop: a 1000 Genomes Project population. multiple populations allowed.
 loc <- link_LD(loc, 
@@ -28,14 +32,16 @@ loc <- link_LD(loc,
                genome_build="grch37",
                token = "d67110dd7bd9")
 
-#add recombination rate
+# Add recombination rate
 loc <- link_recomb(loc, 
                    genome = "hg19")
 
 #summary locus object
 summary(loc)
 
-#plot locuszoom plot
+# STEP3.1 ########################################################################
+# Plot locuszoom plot
+
 pdf(Filename.Output)
 locus_plot(loc, 
            labels = c("index"), #can add multiple SNPs
@@ -45,26 +51,23 @@ locus_plot(loc,
            highlight = Gene)
 dev.off()
 
-###########################################
-#For loop 
+# STEP3.2 ########################################################################
+# Plot multiple locuszoom plot using for loop 
 Assay=c("IL1RN_P18510_OID20700_v1_Inflammation", "IL1R1_P14778_OID21116_v1_Neurology", "HEPACAM2_A8MVW5_OID31151_v1_Neurology_II", "CALCA_P01258_OID20983_v1_Neurology", "IL36G_Q9NZH8_OID30551_v1_Inflammation_II", "MMP1_P03956_OID20672_v1_Inflammation", "IFIT3_O14879_OID31283_v1_Oncology_II", "KLK15_Q9H2R5_OID31427_v1_Oncology_II", "TG_P01266_OID31359_v1_Oncology_II", "DPP10_Q8N608_OID20527_v1_Inflammation", "UMOD_P07911_OID20237_v1_Cardiometabolic")
 
 for (i in 1:length(Assay)) {
 
-  #make object for Filename.Input and Filename.Output
+  # make object for Filename.Input and Filename.Output
   Filename.Input=paste0("/mnt/zfs/P201_UKB_pQTL/results/", Gene, "/region/plot/input/results_", Gene, "_region_", Assay[i], "_rsID.txt")
   Filename.Output=paste0("/mnt/zfs/P201_UKB_pQTL/results/", Gene, "/region/plot/output/locuszoom_", Gene, "_region_", Assay[i], "_", Pop, ".pdf")
   
-  #read input 
+  # read input 
   dat <- fread(Filename.Input)
   
-  #create locus object for plotting
-  #gene region +/-500kb 
+  # create locus object for plotting: gene region +/-500kb 
   loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75")
   
-  #add LD: to do this, get the token in here: https://ldlink.nih.gov/?tab=apiaccess
-  #it queries LDlink (https://ldlink.nci.nih.gov/) via the LDlinkR package.
-  #pop: a 1000 Genomes Project population. multiple populations allowed.
+  #add LD
   loc <- link_LD(loc, 
                  pop = Pop,
                  r2d = "r2", 
