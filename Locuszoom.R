@@ -37,8 +37,16 @@ loc <- link_LD(loc,
                token = "d67110dd7bd9")
 
 # Add recombination rate
+#loc <- link_recomb(loc, 
+#                   genome = "hg19")
+#retrieving UCSC recombination rate takes time and sometimes get error
+
+#use downloaded the whole recombination rate track
+#Caution: Used Combined Population
+#there are other track for CEU and YRI.
+recomb.hg19 <- import.bw("/mnt/zfs/P201_UKB_pQTL/data/hapMapRelease24CombinedRecombMap.bw")
 loc <- link_recomb(loc, 
-                   genome = "hg19")
+                   recomb = recomb.hg19)
 
 #summary locus object
 summary(loc)
