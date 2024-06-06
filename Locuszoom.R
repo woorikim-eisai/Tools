@@ -1,11 +1,14 @@
 #Author: Woori Kim
-#Last update: 2024-05-14
+#Last update: 2024-06-06
 #This R script creates a locuszoom plot using locuszoomr package
-#Input format: chr, pos (hg19), rsid and p 
+#Input format: chr, pos (hg19), rsid, p, LOG10P, logP
 #Example
-#chrom,pos,rsid,p
-#2,113473611,2:113473611_AT_A,0.0001
-#2,113473650,rs138922943,0.5463
+#chrom       pos             rsid            p   LOG10P     logP
+#<int>     <int>           <char>        <num>    <num>    <num>
+#1:     2 113473611 2:113473611_AT_A 0.0001054654 3.976890 3.976890
+#2:     2 113473650      rs138922943 0.5463223905 0.262551 0.262551
+#Update on 2024-06-06 by Woori: Input format needs to have LOG10P and logP additional columns in order to specify yvar="LOG10P" and retain logP in 'locus' function. 
+#If yvar not specified, 'locus' function creates logP column but can't convert extremely small p-value (P<1.00E-325), resulting in 0, which can mislead the figure.
 
 library(locuszoomr); library(EnsDb.Hsapiens.v75); library(data.table)
 
@@ -25,7 +28,7 @@ Filename.Output=paste0("/mnt/zfs/P201_UKB_pQTL/results/PAX8/region/plot/output/l
 dat <- fread(Filename.Input)
 
 # Create locus object for plotting: gene region +/-500kb 
-loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75")
+loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75", yvar="LOG10P")
 
 # Add LD: to do this, get the token in here: https://ldlink.nih.gov/?tab=apiaccess
 #it queries LDlink (https://ldlink.nci.nih.gov/) via the LDlinkR package.
@@ -44,7 +47,7 @@ loc <- link_LD(loc,
 #use downloaded the whole recombination rate track
 #Caution: Used Combined Population
 #there are other track for CEU and YRI.
-recomb.hg19 <- import.bw("/mnt/zfs/P201_UKB_pQTL/data/hapMapRelease24CombinedRecombMap.bw")
+recomb.hg19 <- rtracklayer::import.bw("/mnt/zfs/P201_UKB_pQTL/data/hapMapRelease24CombinedRecombMap.bw")
 loc <- link_recomb(loc, 
                    recomb = recomb.hg19)
 
@@ -82,7 +85,7 @@ for (i in 1:length(Assay)) {
   dat <- fread(Filename.Input)
   
   # create locus object for plotting: gene region +/-500kb 
-  loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75")
+  loc <- locus(gene = Gene, data=dat, flank = 5e5, ens_db="EnsDb.Hsapiens.v75", yvar="LOG10P")
   
   #add LD
   loc <- link_LD(loc, 
