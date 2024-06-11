@@ -1,6 +1,7 @@
-#This script performs conditional analysis using GCTA tool. 
+#This is the example script to perform conditional analysis using GCTA tool. 
 #GCTA-COJO: multi-SNP-based conditional & joint association analysis using GWAS summary data
 #https://yanglab.westlake.edu.cn/software/gcta/#COJO
+#GCTA tool is available in g2d2-human-genetics-tools docker. 
 
 #Step 1
 #Create a file including SNPs that are conditioned: *.cond.snplist
@@ -26,8 +27,8 @@ assay="ASGR2 CCL20 NEFL TREM2 TREML2"
 
 for i in $assay; 
 
-do 
-gcta64  --bfile $in/TREM2_Region_1KG  --chr 6 --cojo-file $in/"$i"_pQTL_in_TREM2_Region.ma --cojo-cond $in/"$i".cond.snplist --out $out/"$i"_pQTL_in_TREM2_Region_cond
+  do 
+  gcta64  --bfile $in/TREM2_Region_1KG  --chr 6 --cojo-file $in/"$i"_pQTL_in_TREM2_Region.ma --cojo-cond $in/"$i".cond.snplist --out $out/"$i"_pQTL_in_TREM2_Region_cond
 
 done
 
